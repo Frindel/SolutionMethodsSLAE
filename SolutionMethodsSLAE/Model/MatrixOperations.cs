@@ -2,7 +2,7 @@
 
 namespace SolutionMethodsSLAE.Model
 {
-	internal class MatrixMethod
+	static class MatrixOperations
 	{
 		/// <summary>
 		/// Находит определитель квадратной мартицы
@@ -11,7 +11,7 @@ namespace SolutionMethodsSLAE.Model
 		/// <returns>Определитель матрицы</returns>
 		/// <exception cref="ApplicationException"></exception>
 		/// <exception cref="ArgumentNullException"></exception>
-		public double GetDeterminant(double[,] matrix)
+		public static double GetDeterminant(Matrix matrix)
 		{
 			double GetDeterminant(double[,] _matrix)
 			{
@@ -20,7 +20,6 @@ namespace SolutionMethodsSLAE.Model
 				{
 					return _matrix[0, 0] * _matrix[1, 1] - _matrix[0, 1] * _matrix[1, 0];
 				}
-
 				//рекурсивный случай
 
 				int mSize = _matrix.GetLength(0);
@@ -57,17 +56,17 @@ namespace SolutionMethodsSLAE.Model
 				throw new ArgumentNullException();
 
 			//проверка равенства столбцов и строк матрицы
-			if (matrix.GetLength(0) != matrix.GetLength(1))
+			if (matrix.RowCount != matrix.ColumnCount)
 				throw new ApplicationException("The matrix is not square");
 
 			//проверка матрицы на отсутствие аргументов
-			if (matrix.Length == 0)
+			if (matrix.RowCount == 0)
 				throw new ApplicationException("The matrix has no arguments");
 
-			if (matrix.GetLength(0) == 1)
+			if (matrix.RowCount == 1)
 				return matrix[0, 0];
 
-			return GetDeterminant(matrix);
+			return GetDeterminant(matrix.ToArray());
 		}
 	}
 }
