@@ -90,6 +90,9 @@ namespace SolutionMethodsSLAE.Model
 		{
 			return _matrix.GetEnumerator();
 		}
+
+		//TODO: реализовать перегрузку операторов для сложения, вычетания, умножения и деления матриц
+
 		#endregion
 	}
 }
