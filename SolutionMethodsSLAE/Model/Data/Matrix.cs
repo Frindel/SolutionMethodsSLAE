@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace SolutionMethodsSLAE.Model
+namespace SolutionMethodsSLAE.Model.Data
 {
-	internal class Matrix : ICloneable, IEnumerable
+	public class Matrix : ICloneable, IEnumerable
 	{
 		private double[,] _matrix;
 
@@ -40,15 +40,15 @@ namespace SolutionMethodsSLAE.Model
 		public void AddRow()
 		{
 			double[,] newMatrix = new double[RowCount + 1, ColumnCount];
-			for (int i =0; i<RowCount;i++)
-				for (int j =0; j<ColumnCount;j++)
+			for (int i = 0; i < RowCount; i++)
+				for (int j = 0; j < ColumnCount; j++)
 					newMatrix[i, j] = _matrix[i, j];
 			_matrix = newMatrix;
 		}
 
 		public void AddColumn()
 		{
-			double[,] newMatrix = new double[RowCount, ColumnCount+1];
+			double[,] newMatrix = new double[RowCount, ColumnCount + 1];
 			for (int i = 0; i < RowCount; i++)
 				for (int j = 0; j < ColumnCount; j++)
 					newMatrix[i, j] = _matrix[i, j];
@@ -57,16 +57,16 @@ namespace SolutionMethodsSLAE.Model
 		public void RemoveRow()
 		{
 			double[,] newMatrix = new double[RowCount - 1, ColumnCount];
-			for (int i = 0; i < RowCount-1; i++)
+			for (int i = 0; i < RowCount - 1; i++)
 				for (int j = 0; j < ColumnCount; j++)
 					newMatrix[i, j] = _matrix[i, j];
 			_matrix = newMatrix;
 		}
 		public void RemoveColumn()
 		{
-			double[,] newMatrix = new double[RowCount, ColumnCount-1];
+			double[,] newMatrix = new double[RowCount, ColumnCount - 1];
 			for (int i = 0; i < RowCount; i++)
-				for (int j = 0; j < ColumnCount-1; j++)
+				for (int j = 0; j < ColumnCount - 1; j++)
 					newMatrix[i, j] = _matrix[i, j];
 			_matrix = newMatrix;
 		}

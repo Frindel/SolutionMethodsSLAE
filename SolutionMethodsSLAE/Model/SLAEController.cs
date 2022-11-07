@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using SolutionMethodsSLAE.Model.Data;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace SolutionMethodsSLAE.Model
 {
@@ -7,15 +10,17 @@ namespace SolutionMethodsSLAE.Model
 	{
 		private static SLAEController _contorller;
 		private SystemLinearAlgebraicEquations _SLAE;
-		private int _SLAECoefficientsCount;
 		private int _equationsCount;
 		private int _coefficientsCount;
 
 		#region Events
+
 		public event PropertyChangedEventHandler? PropertyChanged;
+
 		#endregion
 
 		#region Propertys
+
 		public SystemLinearAlgebraicEquations SLAE
 		{
 			get => _SLAE;
@@ -31,9 +36,9 @@ namespace SolutionMethodsSLAE.Model
 			get => _equationsCount;
 			set
 			{
-				Resize(value, null);
+				Resize(equationsCount: value);
 				_equationsCount = value;
-				OnPropertyChanged(nameof(EquationsCount));
+				OnPropertyChanged(nameof(SLAE));
 			}
 		}
 
@@ -42,11 +47,12 @@ namespace SolutionMethodsSLAE.Model
 			get => _coefficientsCount;
 			set
 			{
-				Resize(null, value);
+				Resize(coefficientsCount: value);
 				_coefficientsCount = value;
-				OnPropertyChanged(nameof(CoefficientsCount));
+				OnPropertyChanged(nameof(SLAE));
 			}
 		}
+
 		#endregion
 
 		#region Constructor
@@ -54,12 +60,14 @@ namespace SolutionMethodsSLAE.Model
 		{
 			//определение первоначальной СЛАУ
 			List<Equation> equations = new List<Equation>();
-			equations.Add(new Equation(0, 0, 0));
-			equations.Add(new Equation(0, 0, 0));
+			equations.Add(new Equation(0, 0, 0, 0));
+			equations.Add(new Equation(0, 0, 0, 0));
+			equations.Add(new Equation(0, 0, 0, 0));
 			_SLAE = new SystemLinearAlgebraicEquations(equations);
 
-			_SLAECoefficientsCount = 2;
+			_coefficientsCount = _equationsCount = 3;
 		}
+
 		public static SLAEController Get()
 		{
 			if (_contorller == null)
@@ -71,6 +79,9 @@ namespace SolutionMethodsSLAE.Model
 		#region Methods
 		public void AddCoefficients(int count)
 		{
+			if (count < 0)
+				throw new ApplicationException("");
+
 			foreach (var a in _SLAE.Equations)
 			{
 				a.AddCoefficients(count);
@@ -79,16 +90,29 @@ namespace SolutionMethodsSLAE.Model
 
 		public void RemoveCoefficients(int count)
 		{
+			if (count > _coefficientsCount)
+				throw new ApplicationException("");
+
+			if (count < 0)
+				throw new ApplicationException("");
+
 			foreach (var a in _SLAE.Equations)
 			{
 				a.RemoveCoefficients(count);
 			}
+
+			//уведомление представления об изменении
+			OnPropertyChanged(nameof(SLAE));
 		}
+
 		public void AddEquations(int count)
 		{
+			if (count < 0)
+				throw new ApplicationException("");
+
 			for (int i = 0; i < count; i++)
 			{
-				_SLAE.AddEquation(0, new double[count]);
+				_SLAE.AddEquation(0, new double[_coefficientsCount]);
 			}
 
 			//уведомление представления об изменении
@@ -97,36 +121,36 @@ namespace SolutionMethodsSLAE.Model
 
 		public void RemoveEquations(int count)
 		{
-			if (SLAE.Equations.Count == 0)
-				return;
+			if (count > _equationsCount)
+				throw new ApplicationException("");
 
-			while (count != 0 && SLAE.Equations.Count != 0)
+			if (count < 0)
+				throw new ApplicationException("");
+
+			while (_equationsCount - count != SLAE.Equations.Count)
 			{
-				Equation equation = _SLAE.Equations[_SLAE.Equations.Count - 1];
-				SLAE.Equations.Remove(equation);
-
-				count--;
+				SLAE.Equations.Remove(SLAE.Equations.Last());
 			}
 
 			//уведомление представления об изменении
 			OnPropertyChanged(nameof(SLAE));
 		}
 
-		private void Resize(int? equationsCount, int? coefficientsCount)
+		private void Resize(int equationsCount = -1, int coefficientsCount = -1)
 		{
-			if (equationsCount != null)
+			if (equationsCount != -1)
 			{
 				if (_equationsCount > equationsCount)
-					RemoveEquations((int)equationsCount);
+					RemoveEquations(_equationsCount - equationsCount);
 				else if (_equationsCount < equationsCount)
-					AddEquations((int)equationsCount);
+					AddEquations(-(_equationsCount - equationsCount));
 			}
-			if (coefficientsCount != null)
+			if (coefficientsCount != -1)
 			{
 				if (_coefficientsCount > coefficientsCount)
-					RemoveEquations((int)coefficientsCount);
-				else if (_coefficientsCount < CoefficientsCount)
-					AddEquations((int)coefficientsCount);
+					RemoveCoefficients(_coefficientsCount- coefficientsCount);
+				else if (_coefficientsCount < coefficientsCount)
+					AddCoefficients(-(_coefficientsCount- coefficientsCount));
 			}
 		}
 

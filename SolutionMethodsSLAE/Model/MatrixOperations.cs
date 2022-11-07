@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SolutionMethodsSLAE.Model.Data;
+using System;
 
 namespace SolutionMethodsSLAE.Model
 {

@@ -4,9 +4,59 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SolutionMethodsSLAE"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
 
-    </Grid>
+        mc:Ignorable="d"
+        Height="400" Width="350" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1.5*"/>
+			<RowDefinition Height="1*"/>
+		</Grid.RowDefinitions>
+		<Grid Margin="5">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="auto"/>
+				<RowDefinition/>
+				<RowDefinition Height="auto"/>
+			</Grid.RowDefinitions>
+			<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+				<Label>Размер матрицы: </Label>
+				<TextBox Width="40" TextAlignment="Center" Text="{Binding Size, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+			</StackPanel>
+			<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+				<ListBox ItemsSource="{Binding SLAE.Equations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" BorderBrush="White" Margin="0,5,0,5" HorizontalAlignment="Center" VerticalAlignment="Center">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal">
+								<ListBox ItemsSource="{Binding Couefficients, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" BorderBrush="White">
+									<ListBox.ItemsPanel>
+										<ItemsPanelTemplate>
+											<WrapPanel IsItemsHost="True"/>
+										</ItemsPanelTemplate>
+									</ListBox.ItemsPanel>
+									<ListBox.ItemTemplate>
+										<DataTemplate>
+											<TextBox Text="{Binding Path=Value}"/>
+										</DataTemplate>
+									</ListBox.ItemTemplate>
+								</ListBox>
+								<Label>=</Label>
+								<TextBox Text="{Binding FreeValue}" Width="auto" Height="auto" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2"/>
+							</StackPanel>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</ScrollViewer>
+			<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+				<Label>Использовать метод: </Label>
+				<ComboBox Width="140">
+					<ComboBoxItem IsSelected="True">Матричный метод</ComboBoxItem>
+				</ComboBox>
+				<Button Margin="5,0,0,0" Content="Решить" Command="{Binding Calculate}"/>
+			</StackPanel>
+		</Grid>
+		<ScrollViewer Grid.Row="1" Margin="5" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+			<ListBox>
+			</ListBox>
+        </ScrollViewer>
+	</Grid>
 </Window>
