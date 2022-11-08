@@ -1,4 +1,5 @@
 ﻿using SolutionMethodsSLAE.Model.Data;
+using SolutionMethodsSLAE.Model;
 
 namespace SolutionMethodsSLAE.Model
 {
@@ -6,7 +7,12 @@ namespace SolutionMethodsSLAE.Model
 	{
 		public static Matrix GetRezultOfMatrixMethod (SystemLinearAlgebraicEquations SLAE)
 		{
-			return null;
+			if (MatrixOperations.GetDeterminant(SLAE.GetCoefficientsMatrix())==0)
+				return null;
+
+			return MatrixOperations.Inverse(SLAE.GetCoefficientsMatrix(),0) * SLAE.GetFreeValuesMatrix();
+			//return MatrixOperations.GetInverseMatrix(SLAE.GetCoefficientsMatrix()) * SLAE.GetFreeValuesMatrix();
+
 		}
 	}
 }

@@ -48,10 +48,10 @@
 			</ScrollViewer>
 			<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
 				<Label>Использовать метод: </Label>
-				<ComboBox Width="140">
+				<ComboBox Width="140" Name="methods">
 					<ComboBoxItem IsSelected="True">Матричный метод</ComboBoxItem>
 				</ComboBox>
-				<Button Margin="5,0,0,0" Content="Решить" Command="{Binding Calculate}"/>
+				<Button Margin="5,0,0,0" Content="Решить" Command="{Binding Calculate}" CommandParameter="{Binding ElementName=methods, Path=SelectedValue.Content}"/>
 			</StackPanel>
 		</Grid>
 		<ScrollViewer Grid.Row="1" Margin="5" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">

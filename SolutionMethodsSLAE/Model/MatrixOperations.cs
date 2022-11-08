@@ -69,5 +69,112 @@ namespace SolutionMethodsSLAE.Model
 
 			return GetDeterminant(matrix.ToArray());
 		}
+
+		///// <summary>
+		///// Вовзвращает матрицу алгебраических дополнений
+		///// </summary>
+		///// <param name="matrix"></param>
+		///// <returns></returns>
+		//public static Matrix GetMatrixAlgebraicAdditions(Matrix matrix)
+		//{
+		//	Matrix rez = new Matrix(matrix.RowCount,matrix.ColumnCount);
+
+		//	for (int i = 0; i < matrix.RowCount; i++)
+		//		for (int j = 0; j < matrix.ColumnCount; j++)
+		//			rez[i, j] = GetDeterminant(Exclude(matrix,i,j));
+
+		//	return rez;
+		//}
+
+		///// <summary>
+		///// Возвращает транспонированную матрицу
+		///// </summary>
+		///// <param name="matrix"></param>
+		///// <returns></returns>
+		//public static Matrix GetTransposedMatrix(Matrix matrix)
+		//{
+		//	Matrix rez = new Matrix(matrix.ColumnCount, matrix.RowCount);
+
+		//	for (int i = 0; i <matrix.RowCount;i++)
+		//		for (int j = 0; j<matrix.ColumnCount;j++)
+		//			rez[i,j] = matrix[j,i];
+
+		//	return rez;
+		//}
+
+		///// <summary>
+		///// Возвращает обратную матрицу
+		///// </summary>
+		///// <param name="matrix"></param>
+		///// <returns></returns>
+		//public static Matrix GetInverseMatrix(Matrix matrix)
+		//{
+		//	double determinant = GetDeterminant(matrix);
+		//	if (determinant == 0)
+		//		return null;
+
+		//	return GetTransposedMatrix(GetMatrixAlgebraicAdditions(matrix)) / determinant;
+		//}
+
+		private static Matrix Exclude(Matrix origin, int row, int col)
+		{
+			if (row > origin.RowCount || col > origin.ColumnCount)
+				throw new IndexOutOfRangeException("Строка или столбец не принадлежат матрице");
+
+			Matrix result = new Matrix(origin.RowCount - 1, origin.ColumnCount - 1);
+			int offsetX = 0;
+			for (int i = 0; i < origin.RowCount; i++)
+			{
+				int offsetY = 0;
+				if (i == row)
+				{
+					offsetX++;
+					continue;
+				}
+				for (int j = 0; j < origin.ColumnCount; j++)
+				{
+					if (j == col)
+					{
+						offsetY++;
+						continue;
+					}
+					result.SetValue(i - offsetX, j - offsetY, origin.GetValue(i, j));
+				}
+
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// Возвращает обратную матрицу
+		/// </summary>
+		/// <param name="origin"></param>
+		/// <param name="round"></param>
+		/// <returns></returns>
+		/// <exception cref="ApplicationException"></exception>
+		public static Matrix Inverse(Matrix origin, int round)
+		{
+			if (origin.RowCount != origin.ColumnCount) throw new ApplicationException("Ошибка: ошибка (ошибка)");
+			double determinant = GetDeterminant(origin);
+
+			if (determinant != 0)
+			{
+				Matrix matrix = new Matrix(origin.RowCount);
+				for (int i = 0; i < origin.RowCount; i++)
+				{
+					for (int j = 0; j < origin.ColumnCount; j++)
+					{
+						Matrix temp = Exclude(origin, i, j);
+						matrix[j, i] = round == 0 ?
+							(1 / determinant) * Math.Pow(-1, i + j) * GetDeterminant(temp) :
+							Math.Round(((1 / determinant) * Math.Pow(-1, i + j) * GetDeterminant(temp)), (int)round, MidpointRounding.ToEven);
+					}
+				}
+				return matrix;
+			}
+			else return origin;
+
+
+		}
 	}
 }
