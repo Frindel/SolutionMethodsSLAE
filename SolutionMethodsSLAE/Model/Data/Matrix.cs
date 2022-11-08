@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace SolutionMethodsSLAE.Model.Data
 {
@@ -24,8 +23,9 @@ namespace SolutionMethodsSLAE.Model.Data
 		public Matrix(int rowCount, int colCount)
 		{
 			_matrix = new double[rowCount, colCount];
-			new List<int>().ToArray();
 		}
+		public Matrix(int size) : this(size, size)
+		{ }
 		#endregion
 
 		#region Methods
@@ -91,7 +91,78 @@ namespace SolutionMethodsSLAE.Model.Data
 			return _matrix.GetEnumerator();
 		}
 
-		//TODO: реализовать перегрузку операторов для сложения, вычетания, умножения и деления матриц
+		public static Matrix operator +(Matrix first, Matrix second)
+		{
+			if (first.RowCount != second.RowCount ||
+				first.ColumnCount != second.ColumnCount)
+				throw new ArgumentException();
+
+			Matrix res = new Matrix(first.RowCount);
+			for (int i = 0; i < res.RowCount; i++)
+			{
+				for (int j = 0; j < res.ColumnCount; j++)
+					res.SetValue(i, j, first[i, j] + second[i, j]);
+			}
+			return res;
+		}
+		public static Matrix operator -(Matrix first, Matrix second)
+		{
+			if (first.RowCount != second.RowCount ||
+				first.ColumnCount != second.ColumnCount)
+				throw new ArgumentException();
+
+			Matrix res = new Matrix(first.RowCount);
+			for (int i = 0; i < res.RowCount; i++)
+			{
+				for (int j = 0; j < res.ColumnCount; j++)
+					res.SetValue(i, j, first[i, j] - second[i, j]);
+			}
+			return res;
+		}
+
+		public static Matrix operator *(Matrix first, Matrix second)
+		{
+			if (first.ColumnCount != second.RowCount)
+				throw new ApplicationException("Матрицы нельзя перемножить");
+
+			Matrix rez = new Matrix(first.RowCount, second.ColumnCount);
+
+			for (int i = 0; i < first.RowCount; i++)
+			{
+				for (int j = 0; j < second.ColumnCount; j++)
+				{
+					for (int k = 0; k < second.RowCount; k++)
+					{
+						rez[i, j] += first[i, k] * second[k, j];
+					}
+				}
+			}
+			return rez;
+		}
+
+		public static Matrix operator /(Matrix first, Matrix second)
+			=> first * MatrixOperations.Inverse(second,0);
+
+		public static Matrix operator *(Matrix first, double second)
+		{
+			Matrix rez = (Matrix)first.Clone();
+			for (int i = 0; i < rez.ColumnCount; i++)
+				for (int j = 0; j < rez.RowCount; j++)
+					rez[i, j] *= second;
+			return rez;
+		}
+
+		public static Matrix operator *(double first, Matrix second) =>
+			second * first;
+
+		public static Matrix operator /(Matrix first, double second)
+		{
+			Matrix rez = (Matrix)first.Clone();
+			for (int i = 0; i < rez.ColumnCount; i++)
+				for (int j = 0; j < rez.RowCount; j++)
+					rez[i, j] /= second;
+			return rez;
+		}
 
 		#endregion
 	}
