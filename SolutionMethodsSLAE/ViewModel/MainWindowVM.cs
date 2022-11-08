@@ -1,7 +1,7 @@
-﻿using SolutionMethodsSLAE.Model;
+﻿using System.ComponentModel;
+using SolutionMethodsSLAE.Model;
+using System.Collections.Generic;
 using SolutionMethodsSLAE.Model.Data;
-using System.ComponentModel;
-using System;
 
 namespace SolutionMethodsSLAE.ViewModel
 {
@@ -16,26 +16,18 @@ namespace SolutionMethodsSLAE.ViewModel
 		#region Propertys
 
 		public SystemLinearAlgebraicEquations SLAE { get => _SLAEController.SLAE; }
-
+		
 		public int Size { get => _SLAEController.CoefficientsCount; set => _SLAEController.CoefficientsCount = _SLAEController.EquationsCount = value; }
 
 		#endregion
 
 		#region Commands
-
+		
 		public RelayCommand Calculate
 		{
 			get => new RelayCommand(obj =>
 			{
-				if (_SLAEController.SLAE.Equations.Count == 0)
-					return;
-
-				switch ((obj as string).ToLower())
-				{
-					case "матричный метод":
-						var rez = DirectSolutionMethods.GetRezultOfMatrixMethod(_SLAEController.SLAE);
-						break;
-				}
+				var a = _SLAEController;
 			});
 		}
 		#endregion
@@ -48,9 +40,9 @@ namespace SolutionMethodsSLAE.ViewModel
 		#endregion
 
 		#region Methods
-		private void OnPropertyChanged(string propertyName = "")
+		private void OnPropertyChanged(string propertyName="")
 		{
-			if (PropertyChanged != null)
+			if (PropertyChanged!=null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
 		#endregion
