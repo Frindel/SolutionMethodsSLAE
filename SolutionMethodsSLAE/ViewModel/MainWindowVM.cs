@@ -1,6 +1,7 @@
 ﻿using SolutionMethodsSLAE.Model;
 using SolutionMethodsSLAE.Model.Data;
 using System.ComponentModel;
+using System.Windows;
 using System;
 
 namespace SolutionMethodsSLAE.ViewModel
@@ -8,6 +9,7 @@ namespace SolutionMethodsSLAE.ViewModel
 	internal class MainWindowVM : INotifyPropertyChanged
 	{
 		private SLAEController _SLAEController;
+		private int[] _sizes;
 
 		#region Events
 		public event PropertyChangedEventHandler? PropertyChanged;
@@ -18,7 +20,15 @@ namespace SolutionMethodsSLAE.ViewModel
 		public SystemLinearAlgebraicEquations SLAE { get => _SLAEController.SLAE; }
 
 		public int Size { get => _SLAEController.CoefficientsCount; set => _SLAEController.CoefficientsCount = _SLAEController.EquationsCount = value; }
-
+		public int[] Sizes
+		{
+			get => _sizes;
+			set
+			{
+				_sizes = value;
+				OnPropertyChanged(nameof(Sizes));
+			}
+		}
 		#endregion
 
 		#region Commands
@@ -30,12 +40,28 @@ namespace SolutionMethodsSLAE.ViewModel
 				if (_SLAEController.SLAE.Equations.Count == 0)
 					return;
 
+				Matrix rez= null!;
+
 				switch ((obj as string).ToLower())
 				{
 					case "матричный метод":
-						var rez = DirectSolutionMethods.GetRezultOfMatrixMethod(_SLAEController.SLAE);
+						rez = DirectSolutionMethods.GetRezultOfMatrixMethod(_SLAEController.SLAE);
 						break;
 				}
+
+				//вывод сообщения в случае невозможности решить СЛАУ
+				if (rez == null)
+				{
+					MessageBox.Show("Невозможно решить СЛАУ");
+					return;
+				}
+
+				//отображение результата вычисления
+				string message = "";
+				for (int i = 0; i < rez.RowCount; i++)
+					message += $"x{i+1} = {Math.Round(rez[i, 0], 2, MidpointRounding.ToEven)}\n";
+				MessageBox.Show(message);
+
 			});
 		}
 		#endregion
@@ -44,6 +70,11 @@ namespace SolutionMethodsSLAE.ViewModel
 		public MainWindowVM()
 		{
 			_SLAEController = SLAEController.Get();
+
+			//заполнения массива допустимых размеров
+			_sizes = new int[20];
+			for (int i = 0; i < _sizes.Length; i++)
+				_sizes[i] = i + 1;
 		}
 		#endregion
 

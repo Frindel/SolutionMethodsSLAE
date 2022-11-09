@@ -10,7 +10,6 @@
     <Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="1.5*"/>
-			<RowDefinition Height="1*"/>
 		</Grid.RowDefinitions>
 		<Grid Margin="5">
 			<Grid.RowDefinitions>
@@ -19,8 +18,10 @@
 				<RowDefinition Height="auto"/>
 			</Grid.RowDefinitions>
 			<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
-				<Label>Размер матрицы: </Label>
-				<TextBox Width="40" TextAlignment="Center" Text="{Binding Size, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+				<Label>Размер матрицы:</Label>
+				<ComboBox ItemsSource="{Binding Sizes}" Width="40" SelectedValue="{Binding Size, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+
+				</ComboBox>
 			</StackPanel>
 			<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 				<ListBox ItemsSource="{Binding SLAE.Equations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" BorderBrush="White" Margin="0,5,0,5" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -47,16 +48,12 @@
 				</ListBox>
 			</ScrollViewer>
 			<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-				<Label>Использовать метод: </Label>
+				<Label>Использовать метод:</Label>
 				<ComboBox Width="140" Name="methods">
 					<ComboBoxItem IsSelected="True">Матричный метод</ComboBoxItem>
 				</ComboBox>
 				<Button Margin="5,0,0,0" Content="Решить" Command="{Binding Calculate}" CommandParameter="{Binding ElementName=methods, Path=SelectedValue.Content}"/>
 			</StackPanel>
 		</Grid>
-		<ScrollViewer Grid.Row="1" Margin="5" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-			<ListBox>
-			</ListBox>
-        </ScrollViewer>
 	</Grid>
 </Window>
