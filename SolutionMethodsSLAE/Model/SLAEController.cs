@@ -18,8 +18,10 @@ namespace SolutionMethodsSLAE.Model
 		#region Propertys
 		public SystemLinearAlgebraicEquations SLAE
 		{
-			get => _SLAE;
-			private set
+            get => _SLAE;
+
+
+            private set
 			{
 				_SLAE = value;
 				OnPropertyChanged(nameof(SLAE));

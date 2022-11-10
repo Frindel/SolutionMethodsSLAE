@@ -5,7 +5,7 @@ namespace SolutionMethodsSLAE.Model
 	internal class Equation
 	{
 		private double[] _coefficientsArr;
-		public int CouefficientsCount { get => _coefficientsArr.Length; }
+		public int CoefficientsCount { get => _coefficientsArr.Length; }
 		public double FreeValue { get; set; }
 		public double this[int index]
 		{
@@ -17,10 +17,19 @@ namespace SolutionMethodsSLAE.Model
 			_coefficientsArr = (double[])coefficients.Clone();
 			FreeValue = freeValue;
 		}
+        public Equation(int coefficientsCount) 
+        {
+            _coefficientsArr=new double[coefficientsCount];
+			FreeValue = 0;
+        }
 
 		public Equation(double freeValue, params double[] coefficients) : this(coefficients, freeValue)
 		{ }
 
+		public double[] GetCoefficients()
+        {
+			return _coefficientsArr;
+        }
 		public double GetValue(int index)
 		{
 			return _coefficientsArr[index];

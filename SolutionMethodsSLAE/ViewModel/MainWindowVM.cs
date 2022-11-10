@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using SolutionMethodsSLAE.Model;
 using System.Collections.Generic;
+using System.Data;
 
 namespace SolutionMethodsSLAE.ViewModel
 {
@@ -8,36 +9,85 @@ namespace SolutionMethodsSLAE.ViewModel
 	{
 		private SLAEController _SLAEController;
 
+
 		#region Events
 		public event PropertyChangedEventHandler? PropertyChanged;
 		#endregion
 
 		#region Propertys
 		public SystemLinearAlgebraicEquations SLAE { get => _SLAEController.SLAE; }
-		public int CoefficientsCount { get => _SLAEController.CoefficientsCount; set => _SLAEController.CoefficientsCount = value; }
-		public int EquationsCount { get => _SLAEController.EquationsCount; set => _SLAEController.EquationsCount = value; }
+		public double[,] Coefficients
+		{
+			get => SLAE.GetCoefficientsMatrix().ToArray(); 
+			set { /* Идея 1: чистить коллекцию коэффициентов и снова инициазировать ее массивом */
+			   	  /* Идея 2: убрать в классе SLAE поле Equations, заменив на поля Coefficients + freeValues и сделать привязку именно к ним */
+				  /* Идея 3: пойти потрогать траву и подышать свежим воздухом */
+			}
+		}
+		public double[,] FreeValues
+		{
+			get => SLAE.GetFreeValuesMatrix().ToArray(); 
+			set { }
+		}
 
-		//при получении результата нужно будет уведомлять об изменении, т. к. результат не яляется уникальной сущностью.
+        public DataView DataView { get; set; }
 
-		//public object Rezult
-		//{ 
-		//	get=> _rezult;
-		//	set
-		//	{
-		//		_rezult = value;
-		//		OnPropertyChanged(nameof(Rezult));
-		//	}
-		//}
-		#endregion
 
-		#region Commands
+		public int Size { get => _SLAEController.CoefficientsCount; set => _SLAEController.CoefficientsCount = value; }
+
+
+
+      /*  public object Result
+        {
+            get => _result;
+            set
+            {
+                _result = value;
+                OnPropertyChanged(nameof(Result));
+            }
+
+        }*/
+        #endregion
+
+        #region Commands
+        private RelayCommand calculate;
+		private RelayCommand show;
 		public RelayCommand Calculate
 		{
-			get => new RelayCommand(obj =>
+			get
 			{
-
-			});
+				return calculate ??
+				(calculate = new RelayCommand(obj =>
+				{
+					UpdateMatrix(Size);
+				}));
+			}
 		}
+		public RelayCommand Show
+		{
+			get
+			{
+				return show ??
+				(show = new RelayCommand(obj =>
+				{
+					string tmp = string.Empty;
+					int i = 0;
+					foreach (var item in SLAE.GetCoefficientsMatrix().ToArray())
+                    {
+						i += 1;
+						if(i<Size)
+							tmp += item.ToString() + " ";
+						else
+                        {
+							tmp += item.ToString() + '\n';
+							i = 0;
+                        }
+                    }
+					System.Windows.MessageBox.Show(tmp);
+				}));
+			}
+		}
+
 		//! добавление/удаление уравнений и столбцов выполняем черех вызов команд
 		#endregion
 
@@ -48,8 +98,8 @@ namespace SolutionMethodsSLAE.ViewModel
 
 			//пример работы с классом SystemLinearAlgebraicEquations
 			List<Equation> equations = new List<Equation>();
-			equations.Add(new Equation(1,-1,1));
-			equations.Add(new Equation(2,4));
+			equations.Add(new Equation(1, -1, 1));
+			equations.Add(new Equation(2, 4));
 			var a = new SystemLinearAlgebraicEquations(equations);
 			var b = a.GetCoefficientsMatrix();
 			var c = a.GetFreeValuesMatrix();
@@ -59,9 +109,23 @@ namespace SolutionMethodsSLAE.ViewModel
 		#region Methods
 		private void OnPropertyChanged(string propertyName)
 		{
-			if (PropertyChanged!=null)
+			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
+
+		private void UpdateMatrix(int size)
+		{
+			SLAE.Clear();
+			System.Windows.MessageBox.Show(size.ToString());
+			for (int i = 0; i < Size; i++)
+			{
+				SLAE.AddEquation(new Equation(size));
+			}
+			OnPropertyChanged("SLAE");
+			OnPropertyChanged("Coefficients");
+			OnPropertyChanged("FreeValues");
+		}
+
 		#endregion
 	}
 }

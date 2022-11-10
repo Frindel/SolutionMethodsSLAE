@@ -68,5 +68,89 @@ namespace SolutionMethodsSLAE.Model
 
 			return GetDeterminant(matrix.ToArray());
 		}
+
+
+		public static Matrix Exclude(Matrix origin, int row, int col)
+        {
+			if (row > origin.RowCount || col > origin.ColumnCount)
+				throw new IndexOutOfRangeException("Строка или столбец не принадлежат матрице");
+
+			Matrix result = new Matrix(origin.RowCount - 1, origin.ColumnCount - 1);
+			int offsetX = 0;
+            for (int i = 0; i < origin.RowCount; i++)
+            {
+				int offsetY = 0;
+				if (i==row) 
+				{ 
+					offsetX++; 
+					continue; 
+				}
+                for (int j = 0; j < origin.ColumnCount; j++)
+                {
+					if (j == col) 
+					{ 
+						offsetY++;
+						continue;
+					}
+					result.SetValue(i - offsetX, j - offsetY, origin.GetValue(i, j));
+				}
+
+            }
+			return result;
+		}
+		public static Matrix Inverse(Matrix origin, int round)
+		{
+			if (origin.RowCount != origin.ColumnCount) throw new ApplicationException();
+			double determinant = GetDeterminant(origin);
+
+			if (determinant != 0)
+			{
+				Matrix matrix = new Matrix(origin.RowCount);
+				for (int i = 0; i < origin.RowCount; i++)
+				{
+					for (int j = 0; j < origin.ColumnCount; j++)
+					{
+						Matrix temp = Exclude(origin, i, j);
+						matrix[j, i] = round == 0 ?
+							(1 / determinant) * Math.Pow(-1, i + j) * GetDeterminant(temp) :
+							Math.Round(((1 / determinant) * Math.Pow(-1, i + j) * GetDeterminant(temp)), (int)round, MidpointRounding.ToEven);
+					}
+				}
+				return matrix;
+			}
+			else return origin;
+
+
+		}
+
+		public static Matrix ReplaceColumn(int replaceAt, Matrix matrix, params double[] array)
+        {
+			if(matrix.RowCount != array.Length)
+				throw new ApplicationException();
+			Matrix res = new Matrix(matrix.RowCount, matrix.ColumnCount);
+            for (int i = 0; i < matrix.RowCount; i++)
+            {
+                for (int j = 0; j < matrix.ColumnCount; j++)
+                {
+                    if (replaceAt != j)
+						res[i, j] = matrix[i, j];
+					else res[i, j] = array[i];
+                }
+            }
+			return res;
+        }
+		public static Matrix Transpose(Matrix matrix)
+        {
+			Matrix transposed = new Matrix(matrix.ColumnCount, matrix.RowCount);
+            for (int i = 0; i < transposed.RowCount; i++)
+            {
+                for (int j = 0; j < transposed.ColumnCount; j++)
+                {
+					transposed[i, j] = matrix[j, i];
+                }
+            }
+			return transposed;
+        }
+		
 	}
 }

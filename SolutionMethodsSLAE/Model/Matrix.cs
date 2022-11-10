@@ -26,10 +26,20 @@ namespace SolutionMethodsSLAE.Model
 			_matrix = new double[rowCount, colCount];
 			new List<int>().ToArray();
 		}
-		#endregion
+		public Matrix(int size)
+        {
+			_matrix = new double[size, size];
+			new List<int>().ToArray();
+        }
+		public Matrix(double[,] matrix)
+        {
+            _matrix = matrix;
+        }
 
-		#region Methods
-		public double GetValue(int rowIndex, int colIndex)
+        #endregion
+
+        #region Methods
+        public double GetValue(int rowIndex, int colIndex)
 		{
 			return _matrix[rowIndex, colIndex];
 		}
@@ -87,11 +97,57 @@ namespace SolutionMethodsSLAE.Model
 		}
 
 		public IEnumerator GetEnumerator()
-		{
-			return _matrix.GetEnumerator();
-		}
+			=> _matrix.GetEnumerator();
 
-		//TODO: реализовать перегрузку операторов для сложения, вычетания, умножения и деления матриц
+		public static Matrix operator +(Matrix first, Matrix second)
+		{
+			if (first.RowCount != second.RowCount &&
+				first.ColumnCount != second.ColumnCount)
+				throw new ArgumentException();
+
+			Matrix res = new Matrix(first.RowCount);
+			for (int i = 0; i < res.RowCount; i++)
+			{
+				for (int j = 0; j < res.ColumnCount; j++)
+					res[i, j] = first[i, j] + second[i, j];
+			}
+			return res;
+		}
+		public static Matrix operator -(Matrix first, Matrix second)
+		{
+			if (first.RowCount != second.RowCount &&
+				first.ColumnCount != second.ColumnCount)
+				throw new ArgumentException();
+
+			Matrix res = new Matrix(first.RowCount);
+			for (int i = 0; i < res.RowCount; i++)
+			{
+				for (int j = 0; j < res.ColumnCount; j++)
+					res.SetValue(i, j, first[i, j] - second[i, j]);
+			}
+			return res;
+		}
+		public static Matrix operator *(Matrix first, Matrix second)
+		{
+			if (first.RowCount != second.RowCount &&
+				first.ColumnCount != second.ColumnCount)
+				throw new ArgumentException();
+
+			Matrix res = new Matrix(first.RowCount);
+			for (int i = 0; i < first.RowCount; i++)
+			{
+				for (int j = 0; j < second.ColumnCount; j++)
+				{
+					for (int k = 0; k < second.RowCount; k++)
+					{
+						res[i, j] += first[i, k] * first[k, j];
+					}
+				}
+			}
+			return res;
+		}
+		public static Matrix operator /(Matrix first, Matrix second)
+			=> first * MatrixOperations.Inverse(second, 0);
 
 		#endregion
 	}
