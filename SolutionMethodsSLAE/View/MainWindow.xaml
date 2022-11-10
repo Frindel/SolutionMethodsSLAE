@@ -51,6 +51,13 @@
 				<Label>Использовать метод:</Label>
 				<ComboBox Width="140" Name="methods">
 					<ComboBoxItem IsSelected="True">Матричный метод</ComboBoxItem>
+					<ComboBoxItem>Метод Крамера</ComboBoxItem>
+					<ComboBoxItem>Метод Гаусса</ComboBoxItem>
+					<ComboBoxItem>Метод Гаусса-Жордана</ComboBoxItem>
+					<ComboBoxItem>Метод прогонки</ComboBoxItem>
+					<ComboBoxItem>Метод LU-разложения</ComboBoxItem>
+					<ComboBoxItem>Метод простых итераций</ComboBoxItem>
+					<ComboBoxItem>Метод Зейделя</ComboBoxItem>
 				</ComboBox>
 				<Button Margin="5,0,0,0" Content="Решить" Command="{Binding Calculate}" CommandParameter="{Binding ElementName=methods, Path=SelectedValue.Content}"/>
 			</StackPanel>

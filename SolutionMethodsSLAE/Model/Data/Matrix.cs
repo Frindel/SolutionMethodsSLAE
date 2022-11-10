@@ -33,10 +33,12 @@ namespace SolutionMethodsSLAE.Model.Data
 		{
 			return _matrix[rowIndex, colIndex];
 		}
+
 		public void SetValue(int rowIndex, int colIndex, double value)
 		{
 			_matrix[rowIndex, colIndex] = value;
 		}
+
 		public void AddRow()
 		{
 			double[,] newMatrix = new double[RowCount + 1, ColumnCount];
@@ -54,6 +56,7 @@ namespace SolutionMethodsSLAE.Model.Data
 					newMatrix[i, j] = _matrix[i, j];
 			_matrix = newMatrix;
 		}
+
 		public void RemoveRow()
 		{
 			double[,] newMatrix = new double[RowCount - 1, ColumnCount];
@@ -62,6 +65,7 @@ namespace SolutionMethodsSLAE.Model.Data
 					newMatrix[i, j] = _matrix[i, j];
 			_matrix = newMatrix;
 		}
+
 		public void RemoveColumn()
 		{
 			double[,] newMatrix = new double[RowCount, ColumnCount - 1];
@@ -70,6 +74,7 @@ namespace SolutionMethodsSLAE.Model.Data
 					newMatrix[i, j] = _matrix[i, j];
 			_matrix = newMatrix;
 		}
+
 		public double[,] ToArray()
 		{
 			double[,] matrix = new double[RowCount, ColumnCount];
@@ -105,6 +110,7 @@ namespace SolutionMethodsSLAE.Model.Data
 			}
 			return res;
 		}
+
 		public static Matrix operator -(Matrix first, Matrix second)
 		{
 			if (first.RowCount != second.RowCount ||

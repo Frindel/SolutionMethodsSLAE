@@ -60,9 +60,9 @@ namespace SolutionMethodsSLAE.Model
 		{
 			//определение первоначальной СЛАУ
 			List<Equation> equations = new List<Equation>();
-			equations.Add(new Equation(0, 0, 0, 0));
-			equations.Add(new Equation(0, 0, 0, 0));
-			equations.Add(new Equation(0, 0, 0, 0));
+			equations.Add(new Equation(3, 3, 2, 1));
+			equations.Add(new Equation(4, 2, 4, 1));
+			equations.Add(new Equation(2, 2, 3, 4));
 			_SLAE = new SystemLinearAlgebraicEquations(equations);
 
 			_coefficientsCount = _equationsCount = 3;

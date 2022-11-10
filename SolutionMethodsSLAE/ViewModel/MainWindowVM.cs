@@ -47,6 +47,15 @@ namespace SolutionMethodsSLAE.ViewModel
 					case "матричный метод":
 						rez = DirectSolutionMethods.GetRezultOfMatrixMethod(_SLAEController.SLAE);
 						break;
+					case "метод крамера":
+
+						break;
+					case "метод гаусса":
+						rez = DirectSolutionMethods.GetRezultOfGaussMethod(_SLAEController.SLAE);
+						break;
+					case "метод гаусса-жордано":
+
+						break;
 				}
 
 				//вывод сообщения в случае невозможности решить СЛАУ

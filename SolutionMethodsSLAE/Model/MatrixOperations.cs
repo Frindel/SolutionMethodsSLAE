@@ -176,5 +176,96 @@ namespace SolutionMethodsSLAE.Model
 
 
 		}
+
+		/// <summary>
+		/// Возвращает расширенную матрицу
+		/// </summary>
+		/// <param name="first"></param>
+		/// <param name="second"></param>
+		/// <returns></returns>
+		public static Matrix CreateExtendMatrix(Matrix first, Matrix second)
+		{
+			if (first.RowCount != second.RowCount || second.ColumnCount != 1)
+				return null;
+
+			Matrix rez = (Matrix)first.Clone();
+			rez.AddColumn();
+
+			int colIndex = first.ColumnCount;
+			for (int i = 0; i < second.RowCount; i++)
+				rez[i, colIndex] = second[i, 0];
+
+			return rez;
+		}
+
+
+		/// <summary>
+		/// Выполняет прямое исключение, применяемое в методе Гаусса
+		/// </summary>
+		/// <param name="matrix">Матрица</param>
+		/// <returns>Матрица треугольного вида</returns>
+		public static Matrix GetTriangularMatrix(SystemLinearAlgebraicEquations SLAE)
+		{
+			//создание расширенной матрицы
+			Matrix extendMatrix = CreateExtendMatrix(SLAE.GetCoefficientsMatrix(), SLAE.GetFreeValuesMatrix());
+
+			void RowReverse(int firstIndex, int secondIndex)
+			{
+				for (int i = 0; i < extendMatrix.ColumnCount; i++)
+				{
+					extendMatrix[firstIndex, i] += extendMatrix[secondIndex, i];
+					extendMatrix[secondIndex, i] = extendMatrix[firstIndex, i] - extendMatrix[secondIndex, i];
+					extendMatrix[firstIndex, i] -= extendMatrix[secondIndex, i];
+				}
+			}
+
+			//проверка оси на оствутствие нулей и замена оси в случае их наличия
+			for (int i = 0; i < extendMatrix.RowCount; i++)
+			{
+				if (extendMatrix[i, i] != 0)
+					continue;
+
+				for (int j = 0; j < extendMatrix.RowCount; j++)
+				{
+					if (i == j)
+						continue;
+
+					//реверс строк в случае отсутствия нулей в рассматриваемом участке оси
+					if (extendMatrix[j, i] != 0 && extendMatrix[i, j] != 0)
+					{
+						RowReverse(i, j);
+
+						goto forend;
+					}
+				}
+
+				//возврат null значения в случае невозможности получения оси без нулей
+				return null;
+			forend:;
+			}
+
+			//перебор всех строк расширенной матрицы
+			for (int i = 0; i < extendMatrix.RowCount-1; i++)
+			{
+				//получение преобразованных значений текущей строки инерации
+				double firstValue = extendMatrix[i, i];
+				for (int j = i; j < extendMatrix.ColumnCount; j++)
+					extendMatrix[i, j] = extendMatrix[i, j] / firstValue;
+
+				//выполнение действий со строками ниже
+				for (int j = i + 1; j < extendMatrix.RowCount; j++)
+				{
+					double firstValueNew = extendMatrix[j, i];
+					for (int k = i; k < extendMatrix.ColumnCount; k++)
+					{
+						var a = extendMatrix[j, k];
+						var b = extendMatrix[i, k];
+						extendMatrix[j, k] = extendMatrix[j, k] / firstValueNew - extendMatrix[i, k];
+					}
+				}
+			}
+
+			return extendMatrix;
+		}
 	}
 }
