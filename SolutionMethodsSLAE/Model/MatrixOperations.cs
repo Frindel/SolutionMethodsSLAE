@@ -198,7 +198,6 @@ namespace SolutionMethodsSLAE.Model
 			return rez;
 		}
 
-
 		/// <summary>
 		/// Выполняет прямое исключение, применяемое в методе Гаусса
 		/// </summary>
@@ -245,7 +244,7 @@ namespace SolutionMethodsSLAE.Model
 			}
 
 			//перебор всех строк расширенной матрицы
-			for (int i = 0; i < extendMatrix.RowCount-1; i++)
+			for (int i = 0; i < extendMatrix.RowCount - 1; i++)
 			{
 				//получение преобразованных значений текущей строки инерации
 				double firstValue = extendMatrix[i, i];
@@ -256,16 +255,40 @@ namespace SolutionMethodsSLAE.Model
 				for (int j = i + 1; j < extendMatrix.RowCount; j++)
 				{
 					double firstValueNew = extendMatrix[j, i];
+					if (firstValueNew == 0)
+						continue;
 					for (int k = i; k < extendMatrix.ColumnCount; k++)
 					{
-						var a = extendMatrix[j, k];
-						var b = extendMatrix[i, k];
 						extendMatrix[j, k] = extendMatrix[j, k] / firstValueNew - extendMatrix[i, k];
 					}
 				}
 			}
 
 			return extendMatrix;
+		}
+
+		/// <summary>
+		/// Выполняет обратную подстановку в треугольной расширенной матрице
+		/// </summary>
+		/// <param name="extendMatrix">Раширенная матрица</param>
+		/// <returns>Результат решения треугольной расширенной матрицы</returns>
+		public static Matrix ReverseSubstitution(Matrix extendMatrix)
+		{
+			Matrix rez = new Matrix(extendMatrix.RowCount, 1);
+
+			for (int i = extendMatrix.RowCount - 1; i >= 0; i--)
+			{
+				double sum = 0;
+
+				for (int j = extendMatrix.ColumnCount-2; j>i;j--)
+				{
+					sum += extendMatrix[i, j] * rez[j, 0];
+				}
+				rez[i,0] = extendMatrix[i, extendMatrix.ColumnCount - 1] - sum;
+				rez[i, 0] /= extendMatrix[i, i];
+			}
+
+			return rez;
 		}
 	}
 }

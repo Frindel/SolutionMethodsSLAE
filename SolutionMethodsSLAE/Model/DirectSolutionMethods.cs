@@ -27,9 +27,7 @@ namespace SolutionMethodsSLAE.Model
 		/// <returns>Результат решения СЛАУ</returns>
 		public static Matrix GetRezultOfGaussMethod(SystemLinearAlgebraicEquations SLAE)
 		{
-			var a = MatrixOperations.GetTriangularMatrix(SLAE);
-
-			return null;
+			return MatrixOperations.ReverseSubstitution(MatrixOperations.GetTriangularMatrix(SLAE));
 		}
 	}
 }
