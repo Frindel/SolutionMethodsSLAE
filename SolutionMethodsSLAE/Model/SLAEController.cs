@@ -23,8 +23,10 @@ namespace SolutionMethodsSLAE.Model
 
 		public SystemLinearAlgebraicEquations SLAE
 		{
-			get => _SLAE;
-			private set
+            get => _SLAE;
+
+
+            private set
 			{
 				_SLAE = value;
 				OnPropertyChanged(nameof(SLAE));

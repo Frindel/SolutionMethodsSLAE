@@ -290,5 +290,38 @@ namespace SolutionMethodsSLAE.Model
 
 			return rez;
 		}
+
+
+		
+
+		public static Matrix ReplaceColumn(int replaceAt, Matrix matrix, params double[] array)
+        {
+			if(matrix.RowCount != array.Length)
+				throw new ApplicationException();
+			Matrix res = new Matrix(matrix.RowCount, matrix.ColumnCount);
+            for (int i = 0; i < matrix.RowCount; i++)
+            {
+                for (int j = 0; j < matrix.ColumnCount; j++)
+                {
+                    if (replaceAt != j)
+						res[i, j] = matrix[i, j];
+					else res[i, j] = array[i];
+                }
+            }
+			return res;
+        }
+		public static Matrix Transpose(Matrix matrix)
+        {
+			Matrix transposed = new Matrix(matrix.ColumnCount, matrix.RowCount);
+            for (int i = 0; i < transposed.RowCount; i++)
+            {
+                for (int j = 0; j < transposed.ColumnCount; j++)
+                {
+					transposed[i, j] = matrix[j, i];
+                }
+            }
+			return transposed;
+        }
+		
 	}
 }
