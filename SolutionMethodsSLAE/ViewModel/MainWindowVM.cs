@@ -48,7 +48,7 @@ namespace SolutionMethodsSLAE.ViewModel
 						rez = DirectSolutionMethods.GetRezultOfMatrixMethod(_SLAEController.SLAE);
 						break;
 					case "метод крамера":
-
+						rez = DirectSolutionMethods.GetResultOfCramerMethod(_SLAEController.SLAE);
 						break;
 					case "метод гаусса":
 						rez = DirectSolutionMethods.GetRezultOfGaussMethod(_SLAEController.SLAE);
