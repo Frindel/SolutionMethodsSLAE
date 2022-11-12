@@ -280,11 +280,11 @@ namespace SolutionMethodsSLAE.Model
 			{
 				double sum = 0;
 
-				for (int j = extendMatrix.ColumnCount-2; j>i;j--)
+				for (int j = extendMatrix.ColumnCount - 2; j > i; j--)
 				{
 					sum += extendMatrix[i, j] * rez[j, 0];
 				}
-				rez[i,0] = extendMatrix[i, extendMatrix.ColumnCount - 1] - sum;
+				rez[i, 0] = extendMatrix[i, extendMatrix.ColumnCount - 1] - sum;
 				rez[i, 0] /= extendMatrix[i, i];
 			}
 
@@ -292,36 +292,71 @@ namespace SolutionMethodsSLAE.Model
 		}
 
 
-		
+
 
 		public static Matrix ReplaceColumn(int replaceAt, Matrix matrix, params double[] array)
-        {
-			if(matrix.RowCount != array.Length)
+		{
+			if (matrix.RowCount != array.Length)
 				throw new ApplicationException();
 			Matrix res = new Matrix(matrix.RowCount, matrix.ColumnCount);
-            for (int i = 0; i < matrix.RowCount; i++)
-            {
-                for (int j = 0; j < matrix.ColumnCount; j++)
-                {
-                    if (replaceAt != j)
+			for (int i = 0; i < matrix.RowCount; i++)
+			{
+				for (int j = 0; j < matrix.ColumnCount; j++)
+				{
+					if (replaceAt != j)
 						res[i, j] = matrix[i, j];
 					else res[i, j] = array[i];
-                }
-            }
+				}
+			}
 			return res;
-        }
+		}
 		public static Matrix Transpose(Matrix matrix)
-        {
+		{
 			Matrix transposed = new Matrix(matrix.ColumnCount, matrix.RowCount);
-            for (int i = 0; i < transposed.RowCount; i++)
-            {
-                for (int j = 0; j < transposed.ColumnCount; j++)
-                {
+			for (int i = 0; i < transposed.RowCount; i++)
+			{
+				for (int j = 0; j < transposed.ColumnCount; j++)
+				{
 					transposed[i, j] = matrix[j, i];
-                }
-            }
+				}
+			}
 			return transposed;
-        }
-		
+		}
+
+		public static Matrix GetLUMatrix(Matrix matrix)
+		{
+			Matrix LUMatrix = new Matrix(matrix.RowCount, matrix.ColumnCount);
+
+			for (int i = 0; i < matrix.RowCount; i++)
+			{
+				//Вычисление значений элементов L матрицы
+				for (int j = i; j < matrix.RowCount; j++)
+				{
+					double sum = 0;
+
+					for (int k = 0; k<i;k++)
+					{
+						sum += LUMatrix[j, k] * LUMatrix[k, i];
+					}
+
+					LUMatrix[j, i] = matrix[j, i] - sum;
+				}
+
+				//Вычисление значений U матрцы
+				for (int j = i + 1; j < matrix.ColumnCount; j++)
+				{
+					double sum = 0;
+
+					for(int k =0;k<i;k++)
+					{
+						sum += LUMatrix[i, k] * LUMatrix[k, j];
+					}
+
+					LUMatrix[i, j] = (matrix[i, j] - sum) / LUMatrix[i, i];
+				}
+			}
+
+			return LUMatrix;
+		}
 	}
 }

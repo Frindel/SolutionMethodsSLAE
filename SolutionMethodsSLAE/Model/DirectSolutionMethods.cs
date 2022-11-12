@@ -29,6 +29,7 @@ namespace SolutionMethodsSLAE.Model
 		{
 			return MatrixOperations.ReverseSubstitution(MatrixOperations.GetTriangularMatrix(SLAE));
 		}
+
 		public static Matrix GetResultOfCramerMethod(SystemLinearAlgebraicEquations slae)
 		{
 			Matrix result = new Matrix(slae.Equations.Count, 0);

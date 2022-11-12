@@ -53,7 +53,10 @@ namespace SolutionMethodsSLAE.ViewModel
 					case "метод гаусса":
 						rez = DirectSolutionMethods.GetRezultOfGaussMethod(_SLAEController.SLAE);
 						break;
-					case "метод гаусса-жордано":
+					case "метод гаусса-жордана":
+
+						break;
+					case "метод lu-разложения":
 
 						break;
 				}
