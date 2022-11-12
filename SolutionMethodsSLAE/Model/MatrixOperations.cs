@@ -14,44 +14,6 @@ namespace SolutionMethodsSLAE.Model
 		/// <exception cref="ArgumentNullException"></exception>
 		public static double GetDeterminant(Matrix matrix)
 		{
-			double GetDeterminant(double[,] _matrix)
-			{
-				//базовый случай; возврат определителя матрицы 2x2
-				if (_matrix.GetLength(0) == 2)
-				{
-					return _matrix[0, 0] * _matrix[1, 1] - _matrix[0, 1] * _matrix[1, 0];
-				}
-				//рекурсивный случай
-
-				int mSize = _matrix.GetLength(0);
-
-				double determinant = 0;
-
-				for (int i = 0; i < mSize; i++)
-				{
-					double[,] newMatrix = new double[mSize - 1, mSize - 1];
-
-					int rowIndex = 0;
-					for (int j = 0; j < mSize; j++)
-					{
-						int colIndex = 0;
-
-						if (j == i)
-							continue;
-
-						for (int k = 1; k < mSize; k++)
-						{
-							newMatrix[rowIndex, colIndex] = _matrix[j, k];
-							colIndex++;
-						}
-						rowIndex++;
-					}
-					determinant += _matrix[i, 0] * GetDeterminant(newMatrix) * ((i + 1) % 2 == 0 ? -1 : 1);
-				}
-
-				return determinant;
-			}
-
 			//проверка матрицы на nullable тип
 			if (matrix == null)
 				throw new ArgumentNullException();
@@ -67,7 +29,14 @@ namespace SolutionMethodsSLAE.Model
 			if (matrix.RowCount == 1)
 				return matrix[0, 0];
 
-			return GetDeterminant(matrix.ToArray());
+			//получение определителя суммированием коефициентов основной диагонали LU-матрицы
+			Matrix LUMatrix = GetLUMatrix(matrix);
+			double sum = LUMatrix[0, 0];
+			for (int i = 1; i < LUMatrix.ColumnCount; i++)
+			{
+				sum *= LUMatrix[i, i];
+			}
+			return sum;
 		}
 
 		///// <summary>
