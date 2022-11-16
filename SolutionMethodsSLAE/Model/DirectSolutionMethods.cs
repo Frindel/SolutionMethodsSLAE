@@ -30,27 +30,95 @@ namespace SolutionMethodsSLAE.Model
 			return MatrixOperations.ReverseSubstitution(MatrixOperations.GetTriangularMatrix(SLAE));
 		}
 
+		/// <summary>
+		/// Выполняет решение СЛАУ методом Крамера
+		/// </summary>
+		/// <param name="slae"></param>
+		/// <returns></returns>
 		public static Matrix GetResultOfCramerMethod(SystemLinearAlgebraicEquations slae)
 		{
-			Matrix result = new Matrix(slae.Equations.Count, 0);
+			Matrix result = new Matrix(slae.CoefficientsCount, 0);
 			Matrix coefficients = slae.GetCoefficientsMatrix();
 			double[] freevalues = new double[coefficients.RowCount];
-            for (int i = 0; i < freevalues.Length; i++)
-            {
+			for (int i = 0; i < freevalues.Length; i++)
+			{
 				freevalues[i] = slae.GetFreeValuesMatrix().ToArray()[i, 0];
 			}
 
 			double mainDeterminant = MatrixOperations.GetDeterminant(coefficients);
-			System.Collections.Generic.List<double> resultVector = new System.Collections.Generic.List<double>();
-			for (int i = 0; i < slae.Equations.Count; i++)
+			System.Collections.Generic.List<double> resultVector
+				= new System.Collections.Generic.List<double>();
+			for (int i = 0; i < slae.EquationsCount; i++)
 				resultVector.Add((MatrixOperations
 					.GetDeterminant(MatrixOperations
-						.ReplaceColumn(0, coefficients, freevalues))) 
+						.ReplaceColumn(i, coefficients, freevalues)))
 							/ mainDeterminant);
-			result = new Matrix(resultVector.Count - 1, 1);
-            for (int i = 0; i < result.RowCount; i++)
+
+			result = new Matrix(resultVector.Count, 1);
+
+			for (int i = 0; i < resultVector.Count; i++)
+			{
 				result[i, 0] = resultVector[i];
+
+			}
+
 			return result;
 		}
+
+		/// <summary>
+		/// Выполняет решение СЛАУ методом прогонки
+		/// </summary>
+		/// <param name="slae"></param>
+		/// <returns></returns>
+		/// <exception cref="System.ArgumentException"></exception>
+		public static Matrix GetResultOfTridiagonalAlgorithm(SystemLinearAlgebraicEquations slae)
+		{
+			if (slae.GetCoefficientsMatrix().RowCount == 1)
+			{
+				Matrix r = new Matrix(1, 1);
+				r[0, 0] = slae.GetFreeValuesMatrix()[0, 0] / slae.GetCoefficientsMatrix()[0, 0];
+				return r;
+			}
+
+			if (!slae.GetCoefficientsMatrix().IsDiagonal(offset: 1))
+				throw new System.ArgumentException("This matrix isn't tridianonal matrix");
+
+
+			Matrix result = new Matrix(slae.CoefficientsCount, 1);
+			Matrix coefs = slae.GetCoefficientsMatrix();
+			Matrix freeVal = slae.GetFreeValuesMatrix();
+
+			int last = coefs.RowCount;
+			int penult = last - 1;
+			double[] a = new double[last];
+			double[] b = new double[last];
+			double[] res = new double[last];
+			double y = coefs[0, 0];
+			a[0] = -coefs[0, 1] / y;
+			b[0] = freeVal[0, 0] / y;
+
+			for (int i = 1; i < penult; i++)
+			{
+				y = coefs[i, i] + coefs[i, i - 1] * a[i - 1];
+				a[i] = -coefs[i, i + 1] / y;
+				b[i] = (freeVal[i, 0] - coefs[i, i - 1] * b[i - 1]) / y;
+			}
+
+			res[penult] = (freeVal[penult, 0] - coefs[penult, penult - 1] * b[penult - 1])
+				/ (coefs[penult, penult] + coefs[penult, penult - 1] * a[penult - 1]);
+
+			for (int i = penult - 1; i >= 0; i--)
+			{
+				res[i] = a[i] * res[i + 1] + b[i];
+			}
+
+			for (int i = 0; i < result.RowCount; i++)
+			{
+				result[i, 0] = res[i];
+			}
+
+			return result;
+		}
+
 	}
 }

@@ -260,9 +260,14 @@ namespace SolutionMethodsSLAE.Model
 			return rez;
 		}
 
-
-
-
+		/// <summary>
+		/// Заменяет строку на новую
+		/// </summary>
+		/// <param name="replaceAt">Индекс строки</param>
+		/// <param name="matrix">Матрица</param>
+		/// <param name="array">Новые значения строки</param>
+		/// <returns>Транспонированная матрица</returns>
+		/// <exception cref="ApplicationException">Количество значений в новой строке не равно количеству строк в старой</exception>
 		public static Matrix ReplaceColumn(int replaceAt, Matrix matrix, params double[] array)
 		{
 			if (matrix.RowCount != array.Length)
@@ -279,6 +284,12 @@ namespace SolutionMethodsSLAE.Model
 			}
 			return res;
 		}
+
+		/// <summary>
+		/// Выполняет транспонирование матрицы
+		/// </summary>
+		/// <param name="matrix">Матрица</param>
+		/// <returns>Транспонированная матрица</returns>
 		public static Matrix Transpose(Matrix matrix)
 		{
 			Matrix transposed = new Matrix(matrix.ColumnCount, matrix.RowCount);
@@ -292,6 +303,11 @@ namespace SolutionMethodsSLAE.Model
 			return transposed;
 		}
 
+		/// <summary>
+		/// Вычисляет LU-матрицу
+		/// </summary>
+		/// <param name="matrix">Матрица</param>
+		/// <returns>LU-матрица</returns>
 		public static Matrix GetLUMatrix(Matrix matrix)
 		{
 			Matrix LUMatrix = new Matrix(matrix.RowCount, matrix.ColumnCount);
@@ -326,6 +342,34 @@ namespace SolutionMethodsSLAE.Model
 			}
 
 			return LUMatrix;
+		}
+
+		/// <summary>
+		/// Выполняет пребразование матрицы в матрицу с диагональным преобладанием
+		/// </summary>
+		/// <param name="slae">СЛАУ</param>
+		/// <returns>Матрица с диагональным преобладанием</returns>
+		public static Matrix GetDiagonalDominanceMatrix(SystemLinearAlgebraicEquations slae)
+		{
+			Matrix result = new Matrix(slae.EquationsCount, slae.CoefficientsCount + 1);
+
+			Matrix referenceMatrix = new Matrix(result.RowCount, result.ColumnCount - 1);
+			for (int i = 0; i < referenceMatrix.RowCount; i++)
+				for (int j = 0; j < referenceMatrix.ColumnCount; j++)
+					if (i == j) referenceMatrix[i, j] = 5;
+					else referenceMatrix[i, j] = 1;
+
+
+			Matrix newCoefs = MatrixOperations.Inverse(slae.GetCoefficientsMatrix(), 0) * referenceMatrix;
+			Matrix newFreeValues = newCoefs * slae.GetFreeValuesMatrix();
+
+			for (int i = 0; i < referenceMatrix.RowCount; i++)
+				for (int j = 0; j < referenceMatrix.ColumnCount; j++)
+					result[i, j] = referenceMatrix[i, j];
+			for (int i = 0; i < newFreeValues.RowCount; i++)
+				result[i, newFreeValues.ColumnCount - 1] = newFreeValues[i, 0];
+
+			return result;
 		}
 	}
 }

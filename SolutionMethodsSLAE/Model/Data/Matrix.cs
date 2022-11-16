@@ -16,6 +16,7 @@ namespace SolutionMethodsSLAE.Model.Data
 
 		public int RowCount { get => _matrix.GetLength(0); }
 		public int ColumnCount { get => _matrix.GetLength(1); }
+
 		#endregion
 
 		#region Constructor
@@ -29,6 +30,37 @@ namespace SolutionMethodsSLAE.Model.Data
 		#endregion
 
 		#region Methods
+		public bool IsConvergent()
+		{
+			for (int i = 0; i < RowCount; i++)
+			{
+				double sum = 0;
+
+				for (int j = 0; j < ColumnCount; j++)
+					if (j != i)
+						sum += Math.Abs(this[i, j]);
+
+				if (Math.Abs(this[i, i]) <= sum)
+					return false;
+			}
+			return true;
+		}
+		public bool IsDiagonal(int offset)
+		{
+			for (int i = 0; i < RowCount; i++)
+			{
+				double sum = 0;
+
+				for (int j = 0; j < ColumnCount; j++)
+					if (j != i - offset && j != i + offset && j != i)
+						sum += Math.Abs(this[i, j]);
+
+				if (sum != 0)
+					return false;
+			}
+			return true;
+		}
+
 		public double GetValue(int rowIndex, int colIndex)
 		{
 			return _matrix[rowIndex, colIndex];

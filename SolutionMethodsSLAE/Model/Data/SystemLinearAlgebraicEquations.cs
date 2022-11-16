@@ -11,6 +11,10 @@ namespace SolutionMethodsSLAE.Model.Data
 
 		public ObservableCollection<Equation> Equations { get; set; } = new ObservableCollection<Equation>();
 
+		public int EquationsCount
+			=> Equations.Count;
+		public int CoefficientsCount
+			=> Equations[0].CouefficientsCount;
 		#endregion
 
 		#region Constructors

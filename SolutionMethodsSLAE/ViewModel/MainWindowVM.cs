@@ -42,24 +42,37 @@ namespace SolutionMethodsSLAE.ViewModel
 
 				Matrix rez= null!;
 
-				switch ((obj as string).ToLower())
+				try
 				{
-					case "матричный метод":
-						rez = DirectSolutionMethods.GetRezultOfMatrixMethod(_SLAEController.SLAE);
-						break;
-					case "метод крамера":
-						rez = DirectSolutionMethods.GetResultOfCramerMethod(_SLAEController.SLAE);
-						break;
-					case "метод гаусса":
-						rez = DirectSolutionMethods.GetRezultOfGaussMethod(_SLAEController.SLAE);
-						break;
-					case "метод гаусса-жордана":
+					switch ((obj as string).ToLower())
+					{
+						case "матричный метод":
+							rez = DirectSolutionMethods.GetRezultOfMatrixMethod(_SLAEController.SLAE);
+							break;
+						case "метод крамера":
+							rez = DirectSolutionMethods.GetResultOfCramerMethod(_SLAEController.SLAE);
+							break;
+						case "метод гаусса":
+							rez = DirectSolutionMethods.GetRezultOfGaussMethod(_SLAEController.SLAE);
+							break;
+						case "метод гаусса-жордана":
 
-						break;
-					case "метод lu-разложения":
+							break;
+						case "метод прогонки":
+							rez = DirectSolutionMethods.GetResultOfTridiagonalAlgorithm(_SLAEController.SLAE);
+							break;
+						case "метод lu-разложения":
 
-						break;
+							break;
+						case "метод простых итераций":
+							rez = IterativeSolutionMethods.GetRezultOfMethodSimpleIterations(_SLAEController.SLAE);
+							break;
+						case "метод зейделя":
+							rez = IterativeSolutionMethods.GetRezultOfSeidelMethod(_SLAEController.SLAE);
+							break;
+					}
 				}
+				catch (Exception) { }
 
 				//вывод сообщения в случае невозможности решить СЛАУ
 				if (rez == null)
