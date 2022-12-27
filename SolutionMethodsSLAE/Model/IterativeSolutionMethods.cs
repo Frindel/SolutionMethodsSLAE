@@ -20,7 +20,7 @@ namespace SolutionMethodsSLAE.Model
 			if (SLAE.GetCoefficientsMatrix().IsConvergent())
 				matrix = MatrixOperations.CreateExtendMatrix(SLAE.GetCoefficientsMatrix(), SLAE.GetFreeValuesMatrix());
 			else
-				matrix = MatrixOperations.GetDiagonalDominanceMatrix(SLAE);
+				matrix = MatrixOperations.GetDiagonalDominatingMatrix(SLAE);
 
 			//нулевое приближение
 			double[] values = new double[matrix.RowCount];
@@ -67,7 +67,7 @@ namespace SolutionMethodsSLAE.Model
 
 			double[] zoomingRezult = Zooming(values);
 
-			Matrix rez = new Matrix(3,1);
+			Matrix rez = new Matrix(zoomingRezult.Length, 1);
 			for (int i = 0; i<zoomingRezult.Length;i++)
 			{
 				rez[i,0] = zoomingRezult[i];
@@ -91,7 +91,7 @@ namespace SolutionMethodsSLAE.Model
 			if (SLAE.GetCoefficientsMatrix().IsConvergent())
 				matrix = MatrixOperations.CreateExtendMatrix(SLAE.GetCoefficientsMatrix(), SLAE.GetFreeValuesMatrix());
 			else
-				matrix = MatrixOperations.GetDiagonalDominanceMatrix(SLAE);
+				matrix = MatrixOperations.GetDiagonalDominatingMatrix(SLAE);
 
 			//нулевое приближение
 			double[] values = new double[matrix.RowCount];
@@ -139,7 +139,7 @@ namespace SolutionMethodsSLAE.Model
 
 			double[] zoomingRezult = Zooming(values);
 
-			Matrix rez = new Matrix(3, 1);
+			Matrix rez = new Matrix(zoomingRezult.Length, 1);
 			for (int i = 0; i < zoomingRezult.Length; i++)
 			{
 				rez[i, 0] = zoomingRezult[i];

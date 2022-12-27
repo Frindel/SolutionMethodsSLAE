@@ -56,13 +56,13 @@ namespace SolutionMethodsSLAE.ViewModel
 							rez = DirectSolutionMethods.GetRezultOfGaussMethod(_SLAEController.SLAE);
 							break;
 						case "метод гаусса-жордана":
-
+							rez = DirectSolutionMethods.GetResultOfJordaneGaussMethod(_SLAEController.SLAE);
 							break;
 						case "метод прогонки":
 							rez = DirectSolutionMethods.GetResultOfTridiagonalAlgorithm(_SLAEController.SLAE);
 							break;
 						case "метод lu-разложения":
-
+							rez = DirectSolutionMethods.GrtResultsOfLUMethod(_SLAEController.SLAE);
 							break;
 						case "метод простых итераций":
 							rez = IterativeSolutionMethods.GetRezultOfMethodSimpleIterations(_SLAEController.SLAE);

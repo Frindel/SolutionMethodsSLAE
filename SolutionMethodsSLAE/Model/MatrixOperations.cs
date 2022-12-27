@@ -137,6 +137,9 @@ namespace SolutionMethodsSLAE.Model
 						matrix[j, i] = round == 0 ?
 							(1 / determinant) * Math.Pow(-1, i + j) * GetDeterminant(temp) :
 							Math.Round(((1 / determinant) * Math.Pow(-1, i + j) * GetDeterminant(temp)), (int)round, MidpointRounding.ToEven);
+
+						if (double.IsNaN(matrix[j, i]))
+							matrix[j, i] = 0;
 					}
 				}
 				return matrix;
@@ -217,6 +220,7 @@ namespace SolutionMethodsSLAE.Model
 			{
 				//получение преобразованных значений текущей строки инерации
 				double firstValue = extendMatrix[i, i];
+
 				for (int j = i; j < extendMatrix.ColumnCount; j++)
 					extendMatrix[i, j] = extendMatrix[i, j] / firstValue;
 
@@ -351,25 +355,153 @@ namespace SolutionMethodsSLAE.Model
 		/// <returns>Матрица с диагональным преобладанием</returns>
 		public static Matrix GetDiagonalDominanceMatrix(SystemLinearAlgebraicEquations slae)
 		{
-			Matrix result = new Matrix(slae.EquationsCount, slae.CoefficientsCount + 1);
+			void Print(Matrix result)
+            {
+				string s = string.Empty;
+				for (int i = 0; i < result.RowCount; i++)
+				{
+					s += "\n";
+					for (int j = 0; j < result.ColumnCount; j++)
+					{
+						s += result[i, j] + "\t";
+					}
+				}
+				System.Windows.MessageBox.Show(s);
+			}
 
+			Matrix result = new Matrix(slae.EquationsCount, slae.CoefficientsCount + 1);
 			Matrix referenceMatrix = new Matrix(result.RowCount, result.ColumnCount - 1);
 			for (int i = 0; i < referenceMatrix.RowCount; i++)
 				for (int j = 0; j < referenceMatrix.ColumnCount; j++)
-					if (i == j) referenceMatrix[i, j] = 5;
+					if (i == j) referenceMatrix[i, j] = 1000;
 					else referenceMatrix[i, j] = 1;
-
-
 			Matrix newCoefs = MatrixOperations.Inverse(slae.GetCoefficientsMatrix(), 0) * referenceMatrix;
 			Matrix newFreeValues = newCoefs * slae.GetFreeValuesMatrix();
+
 
 			for (int i = 0; i < referenceMatrix.RowCount; i++)
 				for (int j = 0; j < referenceMatrix.ColumnCount; j++)
 					result[i, j] = referenceMatrix[i, j];
+
+
 			for (int i = 0; i < newFreeValues.RowCount; i++)
-				result[i, newFreeValues.ColumnCount - 1] = newFreeValues[i, 0];
+				result[i, result.RowCount] = newFreeValues[i, 0];
+
+			Print(result);
+
 
 			return result;
+		}
+
+		public static Matrix GetDiagonalDominatingMatrix(SystemLinearAlgebraicEquations slae)
+        {
+
+			void Print(Matrix result)
+			{
+				string s = string.Empty;
+				for (int i = 0; i < result.RowCount; i++)
+				{
+					s += "\n";
+					for (int j = 0; j < result.ColumnCount; j++)
+					{
+						s += result[i, j] + "\t";
+					}
+				}
+				System.Windows.MessageBox.Show(s);
+			}
+
+			Matrix result = new Matrix(slae.EquationsCount, slae.CoefficientsCount + 1);
+
+            #region Переносим значения из слау в новую матрицу
+
+            for (int i = 0; i < slae.GetCoefficientsMatrix().RowCount; i++)
+				for (int j = 0; j < slae.GetCoefficientsMatrix().ColumnCount; j++)
+					result[i, j] = slae.GetCoefficientsMatrix()[i, j];
+
+
+			for (int i = 0; i < slae.GetFreeValuesMatrix().RowCount; i++)
+				result[i, result.RowCount] = slae.GetFreeValuesMatrix()[i, 0];
+
+			#endregion
+
+			#region Для начала получаем нулевой нижний треугольник при помощи вычитания строк 
+			for (int column = 0; column < result.ColumnCount; column++)
+			{
+				for (int row = 0; row < result.RowCount; row++)
+				{
+					if (result[row, column] == 0 || row <= column) continue;
+
+                    double difference = result[row, column] / result[column, column];
+					for (int coefficientIndex = 0; coefficientIndex < result.ColumnCount; coefficientIndex++)
+						result[row, coefficientIndex] -= difference * result[column, coefficientIndex]; //Потом наверное убрать округление
+				}
+            }
+			#endregion
+
+			#region Теперь получаем нули в верхнем треугольнике тем же образом
+
+			for (int column = 0; column < result.ColumnCount-1; column++)
+			{
+				for (int row = 0; row < result.RowCount; row++)
+				{
+					if (result[row, column] == 0 || row >= column) continue;
+
+					double difference = result[row, column] / result[column, column];
+					for (int coefficientIndex = 0; coefficientIndex < result.ColumnCount; coefficientIndex++)
+						result[row, coefficientIndex] -= difference * result[column, coefficientIndex];//Потом наверное убрать округление
+				}
+
+			}
+			#endregion
+
+			//Print(result); 
+
+			return result;
+
+		}
+
+		public static Matrix GetLMatrix(Matrix LUMatrix)
+		{
+			Matrix LMatrix = new Matrix(LUMatrix.RowCount, LUMatrix.ColumnCount);
+
+			if (LUMatrix == null)
+				return null;
+
+			for (int i = 0; i < LUMatrix.RowCount; i++)
+			{
+				for (int j = 0; j < LUMatrix.ColumnCount; j++)
+				{
+					if (i >= j)
+						LMatrix[i, j] = LUMatrix[i,j];
+
+				}
+			}
+
+			return LMatrix;
+		}
+
+		public static Matrix GetUMatrix(Matrix LUMatrix)
+		{
+			Matrix UMatrix = new Matrix(LUMatrix.RowCount, LUMatrix.ColumnCount);
+
+
+
+			if (LUMatrix == null)
+				return null;
+
+			for (int i = 0; i < LUMatrix.RowCount; i++)
+			{
+				for (int j = i; j < LUMatrix.ColumnCount; j++)
+				{
+					if (i < j)
+						UMatrix[i, j] = LUMatrix[i, j];
+
+					if (i == j)
+						UMatrix[i, j] = 1;
+				}
+			}
+
+			return UMatrix;
 		}
 	}
 }

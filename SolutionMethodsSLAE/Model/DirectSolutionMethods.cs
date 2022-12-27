@@ -39,6 +39,7 @@ namespace SolutionMethodsSLAE.Model
 		{
 			Matrix result = new Matrix(slae.CoefficientsCount, 0);
 			Matrix coefficients = slae.GetCoefficientsMatrix();
+
 			double[] freevalues = new double[coefficients.RowCount];
 			for (int i = 0; i < freevalues.Length; i++)
 			{
@@ -46,8 +47,10 @@ namespace SolutionMethodsSLAE.Model
 			}
 
 			double mainDeterminant = MatrixOperations.GetDeterminant(coefficients);
+
 			System.Collections.Generic.List<double> resultVector
 				= new System.Collections.Generic.List<double>();
+
 			for (int i = 0; i < slae.EquationsCount; i++)
 				resultVector.Add((MatrixOperations
 					.GetDeterminant(MatrixOperations
@@ -120,5 +123,42 @@ namespace SolutionMethodsSLAE.Model
 			return result;
 		}
 
+		/// <summary>
+		/// Выполняет решение СЛАУ методом Жордана-Гаусса
+		/// </summary>
+		/// <param name="slae"></param>
+		/// <returns></returns>
+		public static Matrix GetResultOfJordaneGaussMethod(SystemLinearAlgebraicEquations slae)
+        {
+			Matrix temp = MatrixOperations.GetDiagonalDominatingMatrix(slae);
+
+            for (int i = 0; i < temp.ColumnCount-1; i++)
+            {
+				temp[i, temp.ColumnCount - 1] /= temp[i, i];
+				temp[i, i] = 1;
+			}
+
+			Matrix result = new Matrix(temp.RowCount, 1);
+
+            for (int i = 0; i < result.RowCount; i++)
+				result[i, 0] = temp[i, temp.ColumnCount - 1];
+
+			return result;
+		}
+
+		public static Matrix GrtResultsOfLUMethod(SystemLinearAlgebraicEquations slae)
+		{
+			Matrix b = slae.GetFreeValuesMatrix();
+			var a = MatrixOperations.GetLUMatrix(slae.GetCoefficientsMatrix());
+
+			var l = MatrixOperations.GetLMatrix(a);
+			var u = MatrixOperations.GetUMatrix(a);
+
+			var InverseL = MatrixOperations.Inverse(MatrixOperations.GetLMatrix(a), 0);
+			var InverseU = MatrixOperations.Inverse(MatrixOperations.GetUMatrix(a), 0);
+			var y = InverseL * b;
+			var x = InverseU * y;
+			return x;
+		}
 	}
 }
